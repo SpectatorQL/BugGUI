@@ -16,6 +16,7 @@ namespace BugGUI
     public partial class Form1 : Form
     {
         TextBox[] _netplayTextBoxes;
+        StringBuilder _argvStringBuilder = new StringBuilder();
 
         public Form1()
         {
@@ -38,33 +39,38 @@ namespace BugGUI
         void startButton_Click(object sender, EventArgs e)
         {
             string argv = "";
+            // NOTE(SpectatorQL): Do we want the program to assume that it is located in the mednafen directory?
             string mednafenPath = @"D:\mednafen-1.22.2-win64\mednafen.exe";
             string[] netplayArgs =
             {
-                "-netplay.hostname",
+                "-netplay.host",
                 "-netplay.port",
                 "-netplay.nick",
                 "-netplay.gamekey"
             };
             
-            StringBuilder sb = new StringBuilder();
             if(netplayCheckBox.Checked)
             {
+                _argvStringBuilder.Append(" ");
+                _argvStringBuilder.Append("-connect");
                 for(int i = 0;
                     i < _netplayTextBoxes.Length;
                     ++i)
                 {
-                    sb.Append(netplayArgs[i]);
-                    sb.Append(" ");
-                    sb.Append(_netplayTextBoxes[i].Text);
+                    _argvStringBuilder.Append(" ");
+                    _argvStringBuilder.Append(netplayArgs[i]);
+                    _argvStringBuilder.Append(" ");
+                    _argvStringBuilder.Append(_netplayTextBoxes[i].Text);
                 }
             }
 
-            sb.Append(" ");
-            sb.Append("\"");
-            sb.Append(((FileInfo)gameList.SelectedItem).FullName);
-            sb.Append("\"");
-            argv = sb.ToString();
+            _argvStringBuilder.Append(" ");
+            _argvStringBuilder.Append("\"");
+            _argvStringBuilder.Append(((FileInfo)gameList.SelectedItem).FullName);
+            _argvStringBuilder.Append("\"");
+
+            argv = _argvStringBuilder.ToString();
+            _argvStringBuilder.Clear();
 
             Process.Start(mednafenPath, argv);
         }
