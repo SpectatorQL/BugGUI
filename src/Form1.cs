@@ -18,6 +18,8 @@ namespace BugGUI
         TextBox[] _netplayTextBoxes;
         StringBuilder _argvStringBuilder = new StringBuilder();
 
+        GameListForm _gameListForm;
+
         public Form1()
         {
             InitializeComponent();
@@ -84,6 +86,21 @@ namespace BugGUI
             {
                 _netplayTextBoxes[i].Enabled = box.Checked ? true : false;
             }
+        }
+
+        void selectGameMenuItem_Click(object sender, EventArgs e)
+        {
+            // NOTE(SpectatorQL): Do I really have to do this every time?
+            _gameListForm = new GameListForm();
+            _gameListForm.FormClosing += (s, args) =>
+            {
+                // TODO(SpectatorQL): Change the rom to load, if one was selected.
+                this.Show();
+            };
+
+            _gameListForm.Show();
+
+            this.Hide();
         }
     }
 }
