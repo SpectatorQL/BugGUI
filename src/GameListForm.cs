@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -24,8 +25,8 @@ namespace BugGUI
         GameData[] Games;
         public GameData SelectedGame;
 
-        Action AddDirectoryProc;
-        Action RemoveDirectoryProc;
+        Func<DirectoryInfo, List<DirectoryInfo>> AddDirectoryProc;
+        Func<int, List<DirectoryInfo>> RemoveDirectoryProc;
 
 
         public GameListForm(Config config)
@@ -35,6 +36,7 @@ namespace BugGUI
             AddDirectoryProc = config.AddGamesDirectory;
             RemoveDirectoryProc = config.RemoveGamesDirectory;
 
+            // TODO(SpectatorQL): Clean this up!
             FileInfo[] gameFiles = config.GamesDirectories[0].GetFiles("*.cue", SearchOption.AllDirectories);
             Games = new GameData[gameFiles.Length];
             for(int i = 0;
@@ -49,6 +51,7 @@ namespace BugGUI
                 };
             }
 
+            // TODO(SpectatorQL): directoryList.DataSourceChanged
             directoryList.DataSource = config.GamesDirectories;
 
             gamesGridView.DataSource = Games;
@@ -61,10 +64,24 @@ namespace BugGUI
 
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
+            // TODO(SpectatorQL): Check if the directory has already been added.
+            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
+            DialogResult dialogResult = folderDialog.ShowDialog();
+            if(dialogResult == DialogResult.OK)
+            {
+                DirectoryInfo newDirectoryInfo = new DirectoryInfo(folderDialog.SelectedPath);
+                // NOTE(SpectatorQL): Yup, that's apparently how we have to do it.
+                directoryList.DataSource = null;
+                directoryList.DataSource = AddDirectoryProc(newDirectoryInfo);
+            }
         }
 
         void removeDirectoryButton_Click(object sender, EventArgs e)
         {
+            Debug.Assert(directoryList.SelectedItem is DirectoryInfo);
+            List<DirectoryInfo> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
+            directoryList.DataSource = null;
+            directoryList.DataSource = newList;
         }
     }
 }

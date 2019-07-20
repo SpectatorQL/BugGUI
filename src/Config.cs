@@ -17,7 +17,7 @@ namespace BugGUI
         {
             ConfigFileName = "bugdata.dat";
 
-#if true
+#if false
             if(File.Exists(ConfigFileName))
             {
                 File.Delete(ConfigFileName);
@@ -43,12 +43,26 @@ namespace BugGUI
             }
         }
 
-        public void AddGamesDirectory()
+        public List<DirectoryInfo> AddGamesDirectory(DirectoryInfo newDirectory)
         {
+            GamesDirectories.Add(newDirectory);
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(configFileStream, GamesDirectories);
+
+            return GamesDirectories;
         }
 
-        public void RemoveGamesDirectory()
+        public List<DirectoryInfo> RemoveGamesDirectory(int index)
         {
+            GamesDirectories.RemoveAt(index);
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(configFileStream, GamesDirectories);
+
+            return GamesDirectories;
         }
     }
 }
