@@ -19,6 +19,7 @@ namespace BugGUI
         StringBuilder _argvStringBuilder = new StringBuilder();
 
         GameListForm _gameListForm;
+        GameListForm.GameData SelectedGame;
 
         public Form1()
         {
@@ -31,50 +32,52 @@ namespace BugGUI
                 nickText,
                 gamekeyText
             };
-
-            // TODO(SpectatorQL): FileSystemWatcher!!!
-            DirectoryInfo gameDirInfo = new DirectoryInfo(@"E:\ISOs\PSX");
-            FileInfo[] cueFiles = gameDirInfo.GetFiles("*.cue", SearchOption.AllDirectories);
-            gameList.DataSource = cueFiles;
         }
 
         void startButton_Click(object sender, EventArgs e)
         {
-            string argv = "";
-            // NOTE(SpectatorQL): Do we want the program to assume that it is located in the mednafen directory?
-            string mednafenPath = @"D:\mednafen-1.22.2-win64\mednafen.exe";
-            string[] netplayArgs =
+            if(gameTextBox.Text != "")
             {
-                "-netplay.host",
-                "-netplay.port",
-                "-netplay.nick",
-                "-netplay.gamekey"
-            };
-            
-            if(netplayCheckBox.Checked)
-            {
-                _argvStringBuilder.Append(" ");
-                _argvStringBuilder.Append("-connect");
-                for(int i = 0;
-                    i < _netplayTextBoxes.Length;
-                    ++i)
+                string argv = "";
+                // NOTE(SpectatorQL): Do we want the program to assume that it is located in the mednafen directory?
+                string mednafenPath = @"D:\mednafen-1.22.2-win64\mednafen.exe";
+                string[] netplayArgs =
+                {
+                    "-netplay.host",
+                    "-netplay.port",
+                    "-netplay.nick",
+                    "-netplay.gamekey"
+                };
+
+                if(netplayCheckBox.Checked)
                 {
                     _argvStringBuilder.Append(" ");
-                    _argvStringBuilder.Append(netplayArgs[i]);
-                    _argvStringBuilder.Append(" ");
-                    _argvStringBuilder.Append(_netplayTextBoxes[i].Text);
+                    _argvStringBuilder.Append("-connect");
+                    for(int i = 0;
+                        i < _netplayTextBoxes.Length;
+                        ++i)
+                    {
+                        _argvStringBuilder.Append(" ");
+                        _argvStringBuilder.Append(netplayArgs[i]);
+                        _argvStringBuilder.Append(" ");
+                        _argvStringBuilder.Append(_netplayTextBoxes[i].Text);
+                    }
                 }
+
+                _argvStringBuilder.Append(" ");
+                _argvStringBuilder.Append("\"");
+                _argvStringBuilder.Append(SelectedGame.FullName);
+                _argvStringBuilder.Append("\"");
+
+                argv = _argvStringBuilder.ToString();
+                _argvStringBuilder.Clear();
+
+                Process.Start(mednafenPath, argv);
             }
-
-            _argvStringBuilder.Append(" ");
-            _argvStringBuilder.Append("\"");
-            _argvStringBuilder.Append(((FileInfo)gameList.SelectedItem).FullName);
-            _argvStringBuilder.Append("\"");
-
-            argv = _argvStringBuilder.ToString();
-            _argvStringBuilder.Clear();
-
-            Process.Start(mednafenPath, argv);
+            else
+            {
+                MessageBox.Show("No game selected!", "Error");
+            }
         }
 
         void netplayCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -95,6 +98,8 @@ namespace BugGUI
             _gameListForm.FormClosing += (s, args) =>
             {
                 // TODO(SpectatorQL): Change the rom to load, if one was selected.
+                SelectedGame = _gameListForm.SelectedGame;
+                gameTextBox.Text = SelectedGame.File;
                 this.Show();
             };
 

@@ -69,6 +69,7 @@
             this.gamesGridView.AllowUserToDeleteRows = false;
             this.gamesGridView.AllowUserToResizeColumns = false;
             this.gamesGridView.AllowUserToResizeRows = false;
+            this.gamesGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.gamesGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gamesGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.gamesGridView.Location = new System.Drawing.Point(12, 42);

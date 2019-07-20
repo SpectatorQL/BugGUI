@@ -28,8 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.gameList = new System.Windows.Forms.ComboBox();
-            this.romLabel = new System.Windows.Forms.Label();
+            this.gameLabel = new System.Windows.Forms.Label();
             this.netplayCheckBox = new System.Windows.Forms.CheckBox();
             this.hostText = new System.Windows.Forms.TextBox();
             this.portText = new System.Windows.Forms.TextBox();
@@ -45,25 +44,18 @@
             this.selectGameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // gameList
+            // gameLabel
             // 
-            this.gameList.FormattingEnabled = true;
-            this.gameList.Location = new System.Drawing.Point(21, 43);
-            this.gameList.Name = "gameList";
-            this.gameList.Size = new System.Drawing.Size(219, 21);
-            this.gameList.TabIndex = 0;
-            // 
-            // romLabel
-            // 
-            this.romLabel.AutoSize = true;
-            this.romLabel.Location = new System.Drawing.Point(113, 27);
-            this.romLabel.Name = "romLabel";
-            this.romLabel.Size = new System.Drawing.Size(32, 13);
-            this.romLabel.TabIndex = 1;
-            this.romLabel.Text = "ROM";
+            this.gameLabel.AutoSize = true;
+            this.gameLabel.Location = new System.Drawing.Point(15, 53);
+            this.gameLabel.Name = "gameLabel";
+            this.gameLabel.Size = new System.Drawing.Size(35, 13);
+            this.gameLabel.TabIndex = 1;
+            this.gameLabel.Text = "Game";
             // 
             // netplayCheckBox
             // 
@@ -177,14 +169,14 @@
             // selectGameMenuItem
             // 
             this.selectGameMenuItem.Name = "selectGameMenuItem";
-            this.selectGameMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.selectGameMenuItem.Size = new System.Drawing.Size(138, 22);
             this.selectGameMenuItem.Text = "Select game";
             this.selectGameMenuItem.Click += new System.EventHandler(this.selectGameMenuItem_Click);
             // 
             // exitMenuItem
             // 
             this.exitMenuItem.Name = "exitMenuItem";
-            this.exitMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitMenuItem.Size = new System.Drawing.Size(138, 22);
             this.exitMenuItem.Text = "Exit";
             // 
             // aboutMenuItem
@@ -193,11 +185,20 @@
             this.aboutMenuItem.Size = new System.Drawing.Size(52, 20);
             this.aboutMenuItem.Text = "About";
             // 
+            // gameTextBox
+            // 
+            this.gameTextBox.Enabled = false;
+            this.gameTextBox.Location = new System.Drawing.Point(56, 50);
+            this.gameTextBox.Name = "gameTextBox";
+            this.gameTextBox.Size = new System.Drawing.Size(194, 20);
+            this.gameTextBox.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(263, 450);
+            this.Controls.Add(this.gameTextBox);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.gamekeyLabel);
             this.Controls.Add(this.nickLabel);
@@ -208,8 +209,7 @@
             this.Controls.Add(this.portText);
             this.Controls.Add(this.hostText);
             this.Controls.Add(this.netplayCheckBox);
-            this.Controls.Add(this.romLabel);
-            this.Controls.Add(this.gameList);
+            this.Controls.Add(this.gameLabel);
             this.Controls.Add(this.menuStrip);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "Form1";
@@ -222,9 +222,7 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ComboBox gameList;
-        private System.Windows.Forms.Label romLabel;
+        private System.Windows.Forms.Label gameLabel;
         private System.Windows.Forms.CheckBox netplayCheckBox;
         private System.Windows.Forms.TextBox hostText;
         private System.Windows.Forms.TextBox portText;
@@ -240,6 +238,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectGameMenuItem;
+        private System.Windows.Forms.TextBox gameTextBox;
     }
 }
 
