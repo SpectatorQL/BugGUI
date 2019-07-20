@@ -12,7 +12,6 @@ using System.Windows.Forms;
 
 namespace BugGUI
 {
-    // TODO(SpectatorQL): Customizable paths.
     public partial class Form1 : Form
     {
         TextBox[] _netplayTextBoxes;
@@ -20,6 +19,8 @@ namespace BugGUI
 
         GameListForm _gameListForm;
         GameListForm.GameData SelectedGame;
+
+        Config Config = new Config();
 
         public Form1()
         {
@@ -36,7 +37,7 @@ namespace BugGUI
 
         void startButton_Click(object sender, EventArgs e)
         {
-            if(gameTextBox.Text != "")
+            if(SelectedGame != null)
             {
                 string argv = "";
                 // NOTE(SpectatorQL): Do we want the program to assume that it is located in the mednafen directory?
@@ -93,19 +94,20 @@ namespace BugGUI
 
         void selectGameMenuItem_Click(object sender, EventArgs e)
         {
-            // NOTE(SpectatorQL): Do I really have to do this every time?
-            _gameListForm = new GameListForm();
+            _gameListForm = new GameListForm(Config);
             _gameListForm.FormClosing += (s, args) =>
             {
-                // TODO(SpectatorQL): Change the rom to load, if one was selected.
-                SelectedGame = _gameListForm.SelectedGame;
-                gameTextBox.Text = SelectedGame.File;
-                this.Show();
-            };
+                if(_gameListForm.SelectedGame != null)
+                {
+                    SelectedGame = _gameListForm.SelectedGame;
+                    gameTextBox.Text = SelectedGame.File;
+                }
 
+                Show();
+            };
             _gameListForm.Show();
 
-            this.Hide();
+            Hide();
         }
     }
 }

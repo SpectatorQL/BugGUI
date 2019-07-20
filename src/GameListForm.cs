@@ -20,23 +20,22 @@ namespace BugGUI
             public string FullName;
         }
 
-
-        List<DirectoryInfo> GamesDirectories;
+        
         GameData[] Games;
         public GameData SelectedGame;
 
+        Action AddDirectoryProc;
+        Action RemoveDirectoryProc;
 
-        public GameListForm()
+
+        public GameListForm(Config config)
         {
             InitializeComponent();
 
-            // TODO: Adding/removing directories!
-            GamesDirectories = new List<DirectoryInfo>()
-            {
-                new DirectoryInfo(@"E:\ISOs\PSX"),
-            };
+            AddDirectoryProc = config.AddGamesDirectory;
+            RemoveDirectoryProc = config.RemoveGamesDirectory;
 
-            FileInfo[] gameFiles = GamesDirectories[0].GetFiles("*.cue", SearchOption.AllDirectories);
+            FileInfo[] gameFiles = config.GamesDirectories[0].GetFiles("*.cue", SearchOption.AllDirectories);
             Games = new GameData[gameFiles.Length];
             for(int i = 0;
                 i < Games.Length;
@@ -49,6 +48,8 @@ namespace BugGUI
                     FullName = gameFiles[i].FullName
                 };
             }
+
+            directoryList.DataSource = config.GamesDirectories;
 
             gamesGridView.DataSource = Games;
             gamesGridView.CellDoubleClick += (s, args) =>
