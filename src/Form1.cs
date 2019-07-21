@@ -42,6 +42,8 @@ namespace BugGUI
                 string argv = "";
 #if DEBUG
                 string mednafenPath = @"D:\mednafen-1.22.2-win64\mednafen.exe";
+#else
+                string mednafenPath = "mednafen.exe";
 #endif
                 string[] netplayArgs =
                 {
