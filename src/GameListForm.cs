@@ -22,6 +22,7 @@ namespace BugGUI
         }
 
         
+        // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>?
         GameData[] Games;
         public GameData SelectedGame;
 
@@ -36,25 +37,36 @@ namespace BugGUI
             AddDirectoryProc = config.AddGamesDirectory;
             RemoveDirectoryProc = config.RemoveGamesDirectory;
 
-            // TODO(SpectatorQL): Clean this up!
-            FileInfo[] gameFiles = config.GamesDirectories[0].GetFiles("*.cue", SearchOption.AllDirectories);
-            Games = new GameData[gameFiles.Length];
-            for(int i = 0;
-                i < Games.Length;
-                ++i)
-            {
-                Games[i] = new GameData
-                {
-                    Extension = gameFiles[i].Extension,
-                    File = gameFiles[i].Name,
-                    FullName = gameFiles[i].FullName
-                };
-            }
-
-            // TODO(SpectatorQL): directoryList.DataSourceChanged
+            
             directoryList.DataSource = config.GamesDirectories;
+            directoryList.SelectedValueChanged += (s, args) =>
+            {
+                if(directoryList.SelectedItem != null)
+                {
+                    Debug.Assert(directoryList.SelectedItem is DirectoryInfo);
+                    FileInfo[] gameFiles = config.GamesDirectories[directoryList.SelectedIndex].GetFiles("*", SearchOption.AllDirectories);
+                    int len = gameFiles.Length;
+                    Games = new GameData[len];
+                    for(int i = 0;
+                        i < len;
+                        ++i)
+                    {
+                        Games[i] = new GameData
+                        {
+                            Extension = gameFiles[i].Extension,
+                            File = gameFiles[i].Name,
+                            FullName = gameFiles[i].FullName
+                        };
+                    }
 
-            gamesGridView.DataSource = Games;
+                    gamesGridView.DataSource = Games;
+                }
+                else
+                {
+                    gamesGridView.DataSource = null;
+                }
+            };
+            
             gamesGridView.CellDoubleClick += (s, args) =>
             {
                 SelectedGame = (GameData)gamesGridView.SelectedRows[0].DataBoundItem;

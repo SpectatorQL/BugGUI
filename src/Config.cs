@@ -30,16 +30,15 @@ namespace BugGUI
             {
                 configFileStream = File.Open(ConfigFileName, FileMode.Open, FileAccess.Read, FileShare.None);
                 GamesDirectories = (List<DirectoryInfo>)formatter.Deserialize(configFileStream);
+                configFileStream.Close();
             }
             else
             {
                 configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-                GamesDirectories = new List<DirectoryInfo>()
-                {
-                    new DirectoryInfo(@"E:\ISOs\PSX")
-                };
+                GamesDirectories = new List<DirectoryInfo>();
 
                 formatter.Serialize(configFileStream, GamesDirectories);
+                configFileStream.Close();
             }
         }
 
@@ -50,6 +49,7 @@ namespace BugGUI
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(configFileStream, GamesDirectories);
+            configFileStream.Close();
 
             return GamesDirectories;
         }
@@ -61,6 +61,7 @@ namespace BugGUI
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(configFileStream, GamesDirectories);
+            configFileStream.Close();
 
             return GamesDirectories;
         }

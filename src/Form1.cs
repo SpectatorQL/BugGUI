@@ -18,6 +18,7 @@ namespace BugGUI
         StringBuilder _argvStringBuilder = new StringBuilder();
 
         GameListForm _gameListForm;
+        // NOTE(SpectatorQL): I don't think we need to keep the whole object.
         GameListForm.GameData SelectedGame;
 
         Config Config = new Config();
