@@ -18,8 +18,7 @@ namespace BugGUI
         StringBuilder _argvStringBuilder = new StringBuilder();
 
         GameListForm _gameListForm;
-        // NOTE(SpectatorQL): I don't think we need to keep the whole object.
-        GameListForm.GameData SelectedGame;
+        string SelectedGamePath;
 
         Config Config = new Config();
 
@@ -38,11 +37,12 @@ namespace BugGUI
 
         void startButton_Click(object sender, EventArgs e)
         {
-            if(SelectedGame != null)
+            if(SelectedGamePath != null || SelectedGamePath != "")
             {
                 string argv = "";
-                // NOTE(SpectatorQL): Do we want the program to assume that it is located in the mednafen directory?
+#if DEBUG
                 string mednafenPath = @"D:\mednafen-1.22.2-win64\mednafen.exe";
+#endif
                 string[] netplayArgs =
                 {
                     "-netplay.host",
@@ -53,8 +53,7 @@ namespace BugGUI
 
                 if(netplayCheckBox.Checked)
                 {
-                    _argvStringBuilder.Append(" ");
-                    _argvStringBuilder.Append("-connect");
+                    _argvStringBuilder.Append(" -connect");
                     for(int i = 0;
                         i < _netplayTextBoxes.Length;
                         ++i)
@@ -66,15 +65,15 @@ namespace BugGUI
                     }
                 }
 
-                _argvStringBuilder.Append(" ");
-                _argvStringBuilder.Append("\"");
-                _argvStringBuilder.Append(SelectedGame.FullName);
+                _argvStringBuilder.Append(" \"");
+                _argvStringBuilder.Append(SelectedGamePath);
                 _argvStringBuilder.Append("\"");
 
                 argv = _argvStringBuilder.ToString();
                 _argvStringBuilder.Clear();
-
-                Process.Start(mednafenPath, argv);
+                
+                Process mednafen = Process.Start(mednafenPath, argv);
+                mednafen.WaitForExit();
             }
             else
             {
@@ -100,8 +99,8 @@ namespace BugGUI
             {
                 if(_gameListForm.SelectedGame != null)
                 {
-                    SelectedGame = _gameListForm.SelectedGame;
-                    gameTextBox.Text = SelectedGame.File;
+                    SelectedGamePath = _gameListForm.SelectedGame.FullName;
+                    gameTextBox.Text = _gameListForm.SelectedGame.File;
                 }
 
                 Show();
