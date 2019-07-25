@@ -102,7 +102,7 @@ namespace BugGUI
                 if(_gameListForm.SelectedGame != null)
                 {
                     SelectedGamePath = _gameListForm.SelectedGame.FullName;
-                    gameTextBox.Text = _gameListForm.SelectedGame.File;
+                    gameTextBox.Text = _gameListForm.SelectedGame.FileName;
                 }
 
                 Show();

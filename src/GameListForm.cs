@@ -17,12 +17,26 @@ namespace BugGUI
         public class GameData
         {
             public string Extension { get; set; }
-            public string File { get; set; }
+            public string FileName { get; set; }
             public string FullName;
+
+            public static int CompareExtensions(GameData self, GameData other)
+            {
+                int result = string.Compare(self.Extension, other.Extension);
+                return result;
+            }
+
+            public static int CompareFileNames(GameData self, GameData other)
+            {
+                int result = string.Compare(self.FileName, other.FileName);
+                return result;
+            }
         }
 
-        
-        // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>?
+
+        // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>
+        // and just clear the contents of each item instead of allocating new objects all the time?
+        // Also, changing GameData to be a struct may be even better with that approach.
         GameData[] Games;
         public GameData SelectedGame;
 
@@ -54,7 +68,7 @@ namespace BugGUI
                         Games[i] = new GameData
                         {
                             Extension = gameFiles[i].Extension,
-                            File = gameFiles[i].Name,
+                            FileName = gameFiles[i].Name,
                             FullName = gameFiles[i].FullName
                         };
                     }
@@ -66,11 +80,29 @@ namespace BugGUI
                     gamesGridView.DataSource = null;
                 }
             };
+            directoryList.SelectedItem = null;
+
             
             gamesGridView.CellDoubleClick += (s, args) =>
             {
                 SelectedGame = (GameData)gamesGridView.SelectedRows[0].DataBoundItem;
                 Close();
+            };
+            gamesGridView.ColumnHeaderMouseClick += (s, args) =>
+            {
+                Debug.Assert(gamesGridView.DataSource is GameData[]);
+                int columnIndex = args.ColumnIndex;
+                DataGridViewColumn column = gamesGridView.Columns[columnIndex];
+                if(columnIndex == 0)
+                {
+                    Array.Sort(Games, GameData.CompareExtensions);
+                }
+                else if(columnIndex == 1)
+                {
+                    Array.Sort(Games, GameData.CompareFileNames);
+                }
+                gamesGridView.DataSource = Games;
+                gamesGridView.Invalidate();
             };
         }
 
