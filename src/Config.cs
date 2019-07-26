@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,10 +9,25 @@ using System.Threading.Tasks;
 
 namespace BugGUI
 {
+    [Serializable]
+    public class GamesDirectory
+    {
+        public string Name;
+        public DirectoryInfo DirectoryInfo;
+        public string[] Extensions;
+
+        public override string ToString()
+        {
+            string result = $"{Name} ({DirectoryInfo.FullName})";
+            return result;
+        }
+    }
+
+    // TODO(SpectatorQL): Clean up serialization!
     public class Config
     {
         string ConfigFileName;
-        public List<DirectoryInfo> GamesDirectories { get; }
+        public List<GamesDirectory> GamesDirectories { get; }
 
         public Config()
         {
@@ -29,20 +45,41 @@ namespace BugGUI
             if(File.Exists(ConfigFileName))
             {
                 configFileStream = File.Open(ConfigFileName, FileMode.Open, FileAccess.Read, FileShare.None);
-                GamesDirectories = (List<DirectoryInfo>)formatter.Deserialize(configFileStream);
+                GamesDirectories = (List<GamesDirectory>)formatter.Deserialize(configFileStream);
                 configFileStream.Close();
             }
             else
             {
                 configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-                GamesDirectories = new List<DirectoryInfo>();
+                GamesDirectories = new List<GamesDirectory>();
 
                 formatter.Serialize(configFileStream, GamesDirectories);
                 configFileStream.Close();
             }
         }
 
-        public List<DirectoryInfo> AddGamesDirectory(DirectoryInfo newDirectory)
+        void PrintDirectoryList()
+        {
+#if DEBUG
+            for(int i = 0;
+                i < GamesDirectories.Count;
+                ++i)
+            {
+                var thing = GamesDirectories[i];
+                if(thing != null)
+                {
+                    Debug.WriteLine($"{i}: {thing.ToString()}");
+                }
+                else
+                {
+                    Debug.WriteLine($"{i}: null");
+                }
+            }
+            Debug.Write("\n");
+#endif
+        }
+
+        public List<GamesDirectory> AddGamesDirectory(GamesDirectory newDirectory)
         {
             GamesDirectories.Add(newDirectory);
 
@@ -51,10 +88,12 @@ namespace BugGUI
             formatter.Serialize(configFileStream, GamesDirectories);
             configFileStream.Close();
 
+            PrintDirectoryList();
+
             return GamesDirectories;
         }
 
-        public List<DirectoryInfo> RemoveGamesDirectory(int index)
+        public List<GamesDirectory> RemoveGamesDirectory(int index)
         {
             GamesDirectories.RemoveAt(index);
 
@@ -62,6 +101,8 @@ namespace BugGUI
             FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
             formatter.Serialize(configFileStream, GamesDirectories);
             configFileStream.Close();
+
+            PrintDirectoryList();
 
             return GamesDirectories;
         }

@@ -37,11 +37,11 @@ namespace BugGUI
         // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>
         // and just clear the contents of each item instead of allocating new objects all the time?
         // Also, changing GameData to be a struct may be even better with that approach.
-        GameData[] Games;
+        List<GameData> Games;
         public GameData SelectedGame;
 
-        Func<DirectoryInfo, List<DirectoryInfo>> AddDirectoryProc;
-        Func<int, List<DirectoryInfo>> RemoveDirectoryProc;
+        Func<GamesDirectory, List<GamesDirectory>> AddDirectoryProc;
+        Func<int, List<GamesDirectory>> RemoveDirectoryProc;
 
 
         public GameListForm(Config config)
@@ -57,21 +57,29 @@ namespace BugGUI
             {
                 if(directoryList.SelectedItem != null)
                 {
-                    Debug.Assert(directoryList.SelectedItem is DirectoryInfo);
-                    FileInfo[] gameFiles = config.GamesDirectories[directoryList.SelectedIndex].GetFiles("*", SearchOption.AllDirectories);
-                    int len = gameFiles.Length;
-                    Games = new GameData[len];
+                    Debug.Assert(directoryList.SelectedItem is GamesDirectory);
+                    GamesDirectory selectedDirectory = (GamesDirectory)directoryList.SelectedItem;
+
+                    Games = new List<GameData>();
                     for(int i = 0;
-                        i < len;
+                        i < selectedDirectory.Extensions.Length;
                         ++i)
                     {
-                        Games[i] = new GameData
+                        FileInfo[] gameFiles = selectedDirectory.DirectoryInfo
+                            .GetFiles(selectedDirectory.Extensions[i], SearchOption.AllDirectories);
+                        for(int j = 0;
+                            j < gameFiles.Length;
+                            ++j)
                         {
-                            Extension = gameFiles[i].Extension,
-                            FileName = gameFiles[i].Name,
-                            FullName = gameFiles[i].FullName
-                        };
+                            Games.Add(new GameData
+                            {
+                                Extension = gameFiles[j].Extension,
+                                FileName = gameFiles[j].Name,
+                                FullName = gameFiles[j].FullName
+                            });
+                        }
                     }
+                    Games.Sort(GameData.CompareExtensions);
 
                     gamesGridView.DataSource = Games;
                 }
@@ -90,16 +98,16 @@ namespace BugGUI
             };
             gamesGridView.ColumnHeaderMouseClick += (s, args) =>
             {
-                Debug.Assert(gamesGridView.DataSource is GameData[]);
+                Debug.Assert(gamesGridView.DataSource is List<GameData>);
                 int columnIndex = args.ColumnIndex;
                 DataGridViewColumn column = gamesGridView.Columns[columnIndex];
                 if(columnIndex == 0)
                 {
-                    Array.Sort(Games, GameData.CompareExtensions);
+                    Games.Sort(GameData.CompareExtensions);
                 }
                 else if(columnIndex == 1)
                 {
-                    Array.Sort(Games, GameData.CompareFileNames);
+                    Games.Sort(GameData.CompareFileNames);
                 }
                 gamesGridView.DataSource = Games;
                 gamesGridView.Invalidate();
@@ -109,21 +117,29 @@ namespace BugGUI
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
             // TODO(SpectatorQL): Check if the directory has already been added.
+            // TODO(SpectatorQL): Add a window where the user can specify the name of the new directory
+            // as well as the desired file extensions.
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
             DialogResult dialogResult = folderDialog.ShowDialog();
             if(dialogResult == DialogResult.OK)
             {
                 DirectoryInfo newDirectoryInfo = new DirectoryInfo(folderDialog.SelectedPath);
+                GamesDirectory newDirectory = new GamesDirectory
+                {
+                    DirectoryInfo = newDirectoryInfo,
+                    Name = "Foo",
+                    Extensions = new string[] { "*.cue" },
+                };
                 // NOTE(SpectatorQL): Yup, that's apparently how we have to do it.
                 directoryList.DataSource = null;
-                directoryList.DataSource = AddDirectoryProc(newDirectoryInfo);
+                directoryList.DataSource = AddDirectoryProc(newDirectory);
             }
         }
 
         void removeDirectoryButton_Click(object sender, EventArgs e)
         {
-            Debug.Assert(directoryList.SelectedItem is DirectoryInfo);
-            List<DirectoryInfo> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
+            Debug.Assert(directoryList.SelectedItem is GamesDirectory);
+            List<GamesDirectory> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
             directoryList.DataSource = null;
             directoryList.DataSource = newList;
         }
