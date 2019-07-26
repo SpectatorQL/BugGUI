@@ -13,7 +13,7 @@ namespace BugGUI
 {
     public partial class NewGameDirectoryForm : Form
     {
-        public GamesDirectory newGamesDirectory;
+        public GamesDirectory NewGamesDirectory;
 
         public NewGameDirectoryForm()
         {
@@ -57,7 +57,7 @@ namespace BugGUI
                     extensions = new string[0];
                 }
 
-                newGamesDirectory = new GamesDirectory()
+                NewGamesDirectory = new GamesDirectory()
                 {
                     Name = nameBox.Text,
                     DirectoryInfo = new DirectoryInfo(pathBox.Text),

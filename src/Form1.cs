@@ -14,10 +14,10 @@ namespace BugGUI
 {
     public partial class Form1 : Form
     {
-        TextBox[] _netplayTextBoxes;
-        StringBuilder _argvStringBuilder = new StringBuilder();
+        TextBox[] NetplayTextBoxes;
+        StringBuilder ArgvStringBuilder = new StringBuilder();
 
-        GameListForm _gameListForm;
+        GameListForm GameListForm;
         string SelectedGamePath;
 
         Config Config = new Config();
@@ -26,7 +26,7 @@ namespace BugGUI
         {
             InitializeComponent();
 
-            _netplayTextBoxes = new TextBox[]
+            NetplayTextBoxes = new TextBox[]
             {
                 hostText,
                 portText,
@@ -55,24 +55,24 @@ namespace BugGUI
 
                 if(netplayCheckBox.Checked)
                 {
-                    _argvStringBuilder.Append(" -connect");
+                    ArgvStringBuilder.Append(" -connect");
                     for(int i = 0;
-                        i < _netplayTextBoxes.Length;
+                        i < NetplayTextBoxes.Length;
                         ++i)
                     {
-                        _argvStringBuilder.Append(" ");
-                        _argvStringBuilder.Append(netplayArgs[i]);
-                        _argvStringBuilder.Append(" ");
-                        _argvStringBuilder.Append(_netplayTextBoxes[i].Text);
+                        ArgvStringBuilder.Append(" ");
+                        ArgvStringBuilder.Append(netplayArgs[i]);
+                        ArgvStringBuilder.Append(" ");
+                        ArgvStringBuilder.Append(NetplayTextBoxes[i].Text);
                     }
                 }
 
-                _argvStringBuilder.Append(" \"");
-                _argvStringBuilder.Append(SelectedGamePath);
-                _argvStringBuilder.Append("\"");
+                ArgvStringBuilder.Append(" \"");
+                ArgvStringBuilder.Append(SelectedGamePath);
+                ArgvStringBuilder.Append("\"");
 
-                argv = _argvStringBuilder.ToString();
-                _argvStringBuilder.Clear();
+                argv = ArgvStringBuilder.ToString();
+                ArgvStringBuilder.Clear();
                 
                 Process mednafen = Process.Start(mednafenPath, argv);
                 mednafen.WaitForExit();
@@ -87,27 +87,27 @@ namespace BugGUI
         {
             CheckBox box = (CheckBox)sender;
             for(int i = 0;
-                i < _netplayTextBoxes.Length;
+                i < NetplayTextBoxes.Length;
                 ++i)
             {
-                _netplayTextBoxes[i].Enabled = box.Checked ? true : false;
+                NetplayTextBoxes[i].Enabled = box.Checked ? true : false;
             }
         }
 
         void selectGameMenuItem_Click(object sender, EventArgs e)
         {
-            _gameListForm = new GameListForm(Config);
-            _gameListForm.FormClosing += (s, args) =>
+            GameListForm = new GameListForm(Config);
+            GameListForm.FormClosing += (s, args) =>
             {
-                if(_gameListForm.SelectedGame != null)
+                if(GameListForm.SelectedGame != null)
                 {
-                    SelectedGamePath = _gameListForm.SelectedGame.FullName;
-                    gameTextBox.Text = _gameListForm.SelectedGame.FileName;
+                    SelectedGamePath = GameListForm.SelectedGame.FullName;
+                    gameTextBox.Text = GameListForm.SelectedGame.FileName;
                 }
 
                 Show();
             };
-            _gameListForm.Show();
+            GameListForm.Show();
 
             Hide();
         }

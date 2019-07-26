@@ -142,10 +142,10 @@ namespace BugGUI
             NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm();
             newGameDirectoryForm.FormClosing += (s, args) =>
             {
-                if(newGameDirectoryForm.newGamesDirectory != null)
+                if(newGameDirectoryForm.NewGamesDirectory != null)
                 {
                     directoryList.DataSource = null;
-                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.newGamesDirectory);
+                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.NewGamesDirectory);
                 }
 
                 Enabled = true;
