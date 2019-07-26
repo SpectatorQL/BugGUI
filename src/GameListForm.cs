@@ -20,6 +20,8 @@ namespace BugGUI
             public string FileName { get; set; }
             public string FullName;
 
+            // NOTE(SpectatorQL): We may need to sort based on not just extensions alone
+            // but both extension and file name depending on what we want to actually achieve.
             public static int CompareExtensions(GameData self, GameData other)
             {
                 int result = string.Compare(self.Extension, other.Extension);
@@ -60,22 +62,42 @@ namespace BugGUI
                     Debug.Assert(directoryList.SelectedItem is GamesDirectory);
                     GamesDirectory selectedDirectory = (GamesDirectory)directoryList.SelectedItem;
 
+                    // TODO(SpectatorQL): Investigate, why gamesGridView freaks out if we reuse a list
+                    // instead of creating a new one every time.
                     Games = new List<GameData>();
-                    for(int i = 0;
-                        i < selectedDirectory.Extensions.Length;
-                        ++i)
+                    if(selectedDirectory.Extensions.Length != 0)
                     {
-                        FileInfo[] gameFiles = selectedDirectory.DirectoryInfo
-                            .GetFiles(selectedDirectory.Extensions[i], SearchOption.AllDirectories);
-                        for(int j = 0;
-                            j < gameFiles.Length;
-                            ++j)
+                        for(int i = 0;
+                            i < selectedDirectory.Extensions.Length;
+                            ++i)
+                        {
+                            FileInfo[] gameFiles = selectedDirectory.DirectoryInfo
+                                .GetFiles($"*{selectedDirectory.Extensions[i]}", SearchOption.AllDirectories);
+                            for(int j = 0;
+                                j < gameFiles.Length;
+                                ++j)
+                            {
+                                Games.Add(new GameData
+                                {
+                                    Extension = gameFiles[j].Extension,
+                                    FileName = gameFiles[j].Name,
+                                    FullName = gameFiles[j].FullName
+                                });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        FileInfo[] gameFiles = selectedDirectory.DirectoryInfo.GetFiles("*", SearchOption.AllDirectories);
+                        for(int i = 0;
+                            i < gameFiles.Length;
+                            ++i)
                         {
                             Games.Add(new GameData
                             {
-                                Extension = gameFiles[j].Extension,
-                                FileName = gameFiles[j].Name,
-                                FullName = gameFiles[j].FullName
+                                Extension = gameFiles[i].Extension,
+                                FileName = gameFiles[i].Name,
+                                FullName = gameFiles[i].FullName
                             });
                         }
                     }
@@ -117,23 +139,20 @@ namespace BugGUI
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
             // TODO(SpectatorQL): Check if the directory has already been added.
-            // TODO(SpectatorQL): Add a window where the user can specify the name of the new directory
-            // as well as the desired file extensions.
-            FolderBrowserDialog folderDialog = new FolderBrowserDialog();
-            DialogResult dialogResult = folderDialog.ShowDialog();
-            if(dialogResult == DialogResult.OK)
+            NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm();
+            newGameDirectoryForm.FormClosing += (s, args) =>
             {
-                DirectoryInfo newDirectoryInfo = new DirectoryInfo(folderDialog.SelectedPath);
-                GamesDirectory newDirectory = new GamesDirectory
+                if(newGameDirectoryForm.newGamesDirectory != null)
                 {
-                    DirectoryInfo = newDirectoryInfo,
-                    Name = "Foo",
-                    Extensions = new string[] { "*.cue" },
-                };
-                // NOTE(SpectatorQL): Yup, that's apparently how we have to do it.
-                directoryList.DataSource = null;
-                directoryList.DataSource = AddDirectoryProc(newDirectory);
-            }
+                    directoryList.DataSource = null;
+                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.newGamesDirectory);
+                }
+
+                Enabled = true;
+            };
+
+            Enabled = false;
+            newGameDirectoryForm.Show();
         }
 
         void removeDirectoryButton_Click(object sender, EventArgs e)

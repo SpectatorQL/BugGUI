@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -61,6 +62,12 @@
     <Compile Include="GameListForm.Designer.cs">
       <DependentUpon>GameListForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewGameDirectoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewGameDirectoryForm.Designer.cs">
+      <DependentUpon>NewGameDirectoryForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -68,6 +75,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GameListForm.resx">
       <DependentUpon>GameListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewGameDirectoryForm.resx">
+      <DependentUpon>NewGameDirectoryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

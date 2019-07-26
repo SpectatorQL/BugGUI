@@ -95,6 +95,7 @@
             this.addDirectoryButton.TabIndex = 6;
             this.addDirectoryButton.Text = "Add";
             this.addDirectoryButton.UseVisualStyleBackColor = true;
+            this.addDirectoryButton.Click += new System.EventHandler(this.addDirectoryButton_Click);
             // 
             // browseButton
             // 
@@ -104,6 +105,7 @@
             this.browseButton.TabIndex = 7;
             this.browseButton.Text = "...";
             this.browseButton.UseVisualStyleBackColor = true;
+            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
             // 
             // NewGameDirectoryForm
             // 
