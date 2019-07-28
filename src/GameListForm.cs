@@ -39,7 +39,7 @@ namespace BugGUI
         // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>
         // and just clear the contents of each item instead of allocating new objects all the time?
         // Also, changing GameData to be a struct may be even better with that approach.
-        List<GameData> Games;
+        List<GameData> Games = new List<GameData>();
         public GameData SelectedGame;
 
         Func<GamesDirectory, List<GamesDirectory>> AddDirectoryProc;
@@ -61,10 +61,8 @@ namespace BugGUI
                 {
                     Debug.Assert(directoryList.SelectedItem is GamesDirectory);
                     GamesDirectory selectedDirectory = (GamesDirectory)directoryList.SelectedItem;
-
-                    // TODO(SpectatorQL): Investigate, why gamesGridView freaks out if we reuse a list
-                    // instead of creating a new one every time.
-                    Games = new List<GameData>();
+                    
+                    Games.Clear();
                     if(selectedDirectory.Extensions.Length != 0)
                     {
                         for(int i = 0;
@@ -103,6 +101,9 @@ namespace BugGUI
                     }
                     Games.Sort(GameData.CompareExtensions);
 
+                    gamesGridView.DataSource = null;
+                    gamesGridView.Rows.Clear();
+                    gamesGridView.Columns.Clear();
                     gamesGridView.DataSource = Games;
                 }
                 else
