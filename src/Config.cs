@@ -28,6 +28,7 @@ namespace BugGUI
     {
         string ConfigFileName; // NOTE(SpectatorQL): I'm not a fan of this.
         public List<GamesDirectory> GamesDirectories { get; }
+        [NonSerialized] BinaryFormatter Formatter = new BinaryFormatter();
 
         public Config()
         {
@@ -39,13 +40,12 @@ namespace BugGUI
                 File.Delete(ConfigFileName);
             }
 #endif
-
-            BinaryFormatter formatter = new BinaryFormatter();
+            
             FileStream configFileStream;
             if(File.Exists(ConfigFileName))
             {
                 configFileStream = File.Open(ConfigFileName, FileMode.Open, FileAccess.Read, FileShare.None);
-                GamesDirectories = (List<GamesDirectory>)formatter.Deserialize(configFileStream);
+                GamesDirectories = (List<GamesDirectory>)Formatter.Deserialize(configFileStream);
                 configFileStream.Close();
             }
             else
@@ -53,7 +53,7 @@ namespace BugGUI
                 configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
                 GamesDirectories = new List<GamesDirectory>();
 
-                formatter.Serialize(configFileStream, GamesDirectories);
+                Formatter.Serialize(configFileStream, GamesDirectories);
                 configFileStream.Close();
             }
         }
@@ -79,26 +79,19 @@ namespace BugGUI
 #endif
         }
 
-        public void UpdateConfig()
+        public void Update()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(configFileStream, GamesDirectories);
-            configFileStream.Close();
-
+            using(FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                Formatter.Serialize(configFileStream, GamesDirectories);
+            }
             PrintDirectoryList();
         }
 
         public List<GamesDirectory> AddGamesDirectory(GamesDirectory newDirectory)
         {
             GamesDirectories.Add(newDirectory);
-
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(configFileStream, GamesDirectories);
-            configFileStream.Close();
-
-            PrintDirectoryList();
+            Update();
 
             return GamesDirectories;
         }
@@ -106,13 +99,7 @@ namespace BugGUI
         public List<GamesDirectory> RemoveGamesDirectory(int index)
         {
             GamesDirectories.RemoveAt(index);
-
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(configFileStream, GamesDirectories);
-            configFileStream.Close();
-
-            PrintDirectoryList();
+            Update();
 
             return GamesDirectories;
         }

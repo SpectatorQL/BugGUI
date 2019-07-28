@@ -62,11 +62,11 @@
     <Compile Include="GameListForm.Designer.cs">
       <DependentUpon>GameListForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NewGameDirectoryForm.cs">
+    <Compile Include="GameDirectoryForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewGameDirectoryForm.Designer.cs">
-      <DependentUpon>NewGameDirectoryForm.cs</DependentUpon>
+    <Compile Include="GameDirectoryForm.Designer.cs">
+      <DependentUpon>GameDirectoryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,8 +76,8 @@
     <EmbeddedResource Include="GameListForm.resx">
       <DependentUpon>GameListForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewGameDirectoryForm.resx">
-      <DependentUpon>NewGameDirectoryForm.cs</DependentUpon>
+    <EmbeddedResource Include="GameDirectoryForm.resx">
+      <DependentUpon>GameDirectoryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

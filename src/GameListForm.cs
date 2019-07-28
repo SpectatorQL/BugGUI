@@ -40,22 +40,15 @@ namespace BugGUI
         List<GameData> Games = new List<GameData>();
         public GameData SelectedGame;
 
-        // TODO(SpectatorQL): Ok, there's no reason why this thing can't just talk to the config directly.
-        Func<GamesDirectory, List<GamesDirectory>> AddDirectoryProc;
-        Func<int, List<GamesDirectory>> RemoveDirectoryProc;
-        Action UpdateConfig;
-
+        Config Config;
 
         public GameListForm(Config config)
         {
             InitializeComponent();
 
-            AddDirectoryProc = config.AddGamesDirectory;
-            RemoveDirectoryProc = config.RemoveGamesDirectory;
-            UpdateConfig = config.UpdateConfig;
+            Config = config;
 
-            
-            directoryList.DataSource = config.GamesDirectories;
+            directoryList.DataSource = Config.GamesDirectories;
             directoryList.SelectedValueChanged += (s, args) =>
             {
                 if(directoryList.SelectedItem != null)
@@ -141,20 +134,20 @@ namespace BugGUI
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
             // TODO(SpectatorQL): Check if the directory has already been added.
-            NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm(DirectoryFormIntent.Add, null);
-            newGameDirectoryForm.FormClosing += (s, args) =>
+            GameDirectoryForm gameDirectoryForm = new GameDirectoryForm(DirectoryFormIntent.Add, null);
+            gameDirectoryForm.FormClosing += (s, args) =>
             {
-                if(newGameDirectoryForm.ResultID != DirectoryFormResult.Canceled)
+                if(gameDirectoryForm.ResultID != DirectoryFormResult.Canceled)
                 {
                     directoryList.DataSource = null;
-                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.Directory);
+                    directoryList.DataSource = Config.AddGamesDirectory(gameDirectoryForm.Directory);
                 }
 
                 Enabled = true;
             };
 
             Enabled = false;
-            newGameDirectoryForm.Show();
+            gameDirectoryForm.Show();
         }
 
         void editDirectoryButton_Click(object sender, EventArgs e)
@@ -163,21 +156,20 @@ namespace BugGUI
             {
                 Debug.Assert(directoryList.SelectedItem is GamesDirectory);
                 GamesDirectory selectedDirectory = (GamesDirectory)directoryList.SelectedItem;
-                NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm(DirectoryFormIntent.Edit, selectedDirectory);
-                newGameDirectoryForm.FormClosing += (s, args) =>
+                GameDirectoryForm gameDirectoryForm = new GameDirectoryForm(DirectoryFormIntent.Edit, selectedDirectory);
+                gameDirectoryForm.FormClosing += (s, args) =>
                 {
-                    UpdateConfig();
+                    Config.Update();
 
-                    var swap = directoryList.DataSource;
+                    var temp = directoryList.DataSource;
                     directoryList.DataSource = null;
-                    directoryList.DataSource = swap;
+                    directoryList.DataSource = temp;
 
                     Enabled = true;
                 };
-                newGameDirectoryForm.Directory = selectedDirectory;
 
                 Enabled = false;
-                newGameDirectoryForm.Show();
+                gameDirectoryForm.Show();
             }
         }
 
@@ -186,7 +178,7 @@ namespace BugGUI
             if(directoryList.SelectedItem != null)
             {
                 Debug.Assert(directoryList.SelectedItem is GamesDirectory);
-                List<GamesDirectory> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
+                List<GamesDirectory> newList = Config.RemoveGamesDirectory(directoryList.SelectedIndex);
                 directoryList.DataSource = null;
                 directoryList.DataSource = newList;
             }

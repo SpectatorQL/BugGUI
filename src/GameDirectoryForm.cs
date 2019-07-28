@@ -24,13 +24,13 @@ namespace BugGUI
         Canceled,
     }
 
-    public partial class NewGameDirectoryForm : Form
+    public partial class GameDirectoryForm : Form
     {
         public GamesDirectory Directory;
         DirectoryFormIntent IntentID;
         public DirectoryFormResult ResultID;
 
-        public NewGameDirectoryForm(DirectoryFormIntent intent, GamesDirectory directory)
+        public GameDirectoryForm(DirectoryFormIntent intent, GamesDirectory directory)
         {
             InitializeComponent();
             IntentID = intent;

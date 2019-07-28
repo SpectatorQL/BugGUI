@@ -1,6 +1,6 @@
 ﻿namespace BugGUI
 {
-    partial class NewGameDirectoryForm
+    partial class GameDirectoryForm
     {
         /// <summary>
         /// Required designer variable.
