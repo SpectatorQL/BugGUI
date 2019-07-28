@@ -14,6 +14,7 @@ namespace BugGUI
 {
     public partial class GameListForm : Form
     {
+        // NOTE(SpectatorQL): Should this thing be a struct? It's just 3 pointers.
         public class GameData
         {
             public string Extension { get; set; }
@@ -35,15 +36,14 @@ namespace BugGUI
             }
         }
 
-
-        // NOTE(SpectatorQL): Perhaps we should change this to List<GameData>
-        // and just clear the contents of each item instead of allocating new objects all the time?
-        // Also, changing GameData to be a struct may be even better with that approach.
+        
         List<GameData> Games = new List<GameData>();
         public GameData SelectedGame;
 
+        // TODO(SpectatorQL): Ok, there's no reason why this thing can't just talk to the config directly.
         Func<GamesDirectory, List<GamesDirectory>> AddDirectoryProc;
         Func<int, List<GamesDirectory>> RemoveDirectoryProc;
+        Action UpdateConfig;
 
 
         public GameListForm(Config config)
@@ -52,6 +52,7 @@ namespace BugGUI
 
             AddDirectoryProc = config.AddGamesDirectory;
             RemoveDirectoryProc = config.RemoveGamesDirectory;
+            UpdateConfig = config.UpdateConfig;
 
             
             directoryList.DataSource = config.GamesDirectories;
@@ -140,13 +141,13 @@ namespace BugGUI
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
             // TODO(SpectatorQL): Check if the directory has already been added.
-            NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm();
+            NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm(DirectoryFormIntent.Add, null);
             newGameDirectoryForm.FormClosing += (s, args) =>
             {
-                if(newGameDirectoryForm.NewGamesDirectory != null)
+                if(newGameDirectoryForm.ResultID != DirectoryFormResult.Canceled)
                 {
                     directoryList.DataSource = null;
-                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.NewGamesDirectory);
+                    directoryList.DataSource = AddDirectoryProc(newGameDirectoryForm.Directory);
                 }
 
                 Enabled = true;
@@ -156,12 +157,39 @@ namespace BugGUI
             newGameDirectoryForm.Show();
         }
 
+        void editDirectoryButton_Click(object sender, EventArgs e)
+        {
+            if(directoryList.SelectedItem != null)
+            {
+                Debug.Assert(directoryList.SelectedItem is GamesDirectory);
+                GamesDirectory selectedDirectory = (GamesDirectory)directoryList.SelectedItem;
+                NewGameDirectoryForm newGameDirectoryForm = new NewGameDirectoryForm(DirectoryFormIntent.Edit, selectedDirectory);
+                newGameDirectoryForm.FormClosing += (s, args) =>
+                {
+                    UpdateConfig();
+
+                    var swap = directoryList.DataSource;
+                    directoryList.DataSource = null;
+                    directoryList.DataSource = swap;
+
+                    Enabled = true;
+                };
+                newGameDirectoryForm.Directory = selectedDirectory;
+
+                Enabled = false;
+                newGameDirectoryForm.Show();
+            }
+        }
+
         void removeDirectoryButton_Click(object sender, EventArgs e)
         {
-            Debug.Assert(directoryList.SelectedItem is GamesDirectory);
-            List<GamesDirectory> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
-            directoryList.DataSource = null;
-            directoryList.DataSource = newList;
+            if(directoryList.SelectedItem != null)
+            {
+                Debug.Assert(directoryList.SelectedItem is GamesDirectory);
+                List<GamesDirectory> newList = RemoveDirectoryProc(directoryList.SelectedIndex);
+                directoryList.DataSource = null;
+                directoryList.DataSource = newList;
+            }
         }
     }
 }

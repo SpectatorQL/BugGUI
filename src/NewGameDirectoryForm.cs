@@ -11,13 +11,60 @@ using System.Windows.Forms;
 
 namespace BugGUI
 {
+    public enum DirectoryFormIntent
+    {
+        Add,
+        Edit,
+    }
+
+    public enum DirectoryFormResult
+    {
+        Added,
+        Edited,
+        Canceled,
+    }
+
     public partial class NewGameDirectoryForm : Form
     {
-        public GamesDirectory NewGamesDirectory;
+        public GamesDirectory Directory;
+        DirectoryFormIntent IntentID;
+        public DirectoryFormResult ResultID;
 
-        public NewGameDirectoryForm()
+        public NewGameDirectoryForm(DirectoryFormIntent intent, GamesDirectory directory)
         {
             InitializeComponent();
+            IntentID = intent;
+            switch(intent)
+            {
+                case DirectoryFormIntent.Add:
+                {
+                    break;
+                }
+
+                case DirectoryFormIntent.Edit:
+                {
+                    Directory = directory;
+
+                    nameBox.Text = directory.Name;
+                    pathBox.Text = directory.DirectoryInfo.FullName;
+
+                    string extensionsString = "";
+                    for(int i = 0;
+                        i < directory.Extensions.Length;
+                        ++i)
+                    {
+                        extensionsString += directory.Extensions[i] + ';';
+                    }
+                    extensionsBox.Text = extensionsString;
+                    break;
+                }
+
+                default:
+                {
+                    throw new NullReferenceException("Invalid default case!");
+                    break;
+                }
+            }
         }
 
         void browseButton_Click(object sender, EventArgs e)
@@ -33,38 +80,80 @@ namespace BugGUI
         void addDirectoryButton_Click(object sender, EventArgs e)
         {
             // NOTE(SpectatorQL): Perhaps adding MessageBoxes with warnings is a good idea?
-            if(nameBox.Text != ""
-                && pathBox.Text != ""
-                && nameBox.Text != null
-                && pathBox.Text != null)
+            if(IntentID == DirectoryFormIntent.Add)
             {
-                string[] extensions;
-                if(extensionsBox.Text != "")
+                if(nameBox.Text != ""
+                    && pathBox.Text != ""
+                    && nameBox.Text != null
+                    && pathBox.Text != null)
                 {
-                    extensions = extensionsBox.Text.Split(';');
-                    for(int i = 0;
-                        i < extensions.Length;
-                        ++i)
+                    string[] extensions;
+                    if(extensionsBox.Text != "")
                     {
-                        if(extensions[i][0] != '.')
+                        extensions = extensionsBox.Text.Split(';');
+                        for(int i = 0;
+                            i < extensions.Length;
+                            ++i)
                         {
-                            extensions[i] = '.' + extensions[i];
+                            if(extensions[i][0] != '.')
+                            {
+                                extensions[i] = '.' + extensions[i];
+                            }
                         }
                     }
-                }
-                else
-                {
-                    extensions = new string[0];
-                }
+                    else
+                    {
+                        extensions = new string[0];
+                    }
 
-                NewGamesDirectory = new GamesDirectory()
-                {
-                    Name = nameBox.Text,
-                    DirectoryInfo = new DirectoryInfo(pathBox.Text),
-                    Extensions = extensions,
-                };
+                    Directory = new GamesDirectory()
+                    {
+                        Name = nameBox.Text,
+                        DirectoryInfo = new DirectoryInfo(pathBox.Text),
+                        Extensions = extensions,
+                    };
 
-                Close();
+                    ResultID = DirectoryFormResult.Added;
+                    Close();
+                }
+            }
+            else if(IntentID == DirectoryFormIntent.Edit)
+            {
+                if(nameBox.Text != ""
+                    && pathBox.Text != ""
+                    && nameBox.Text != null
+                    && pathBox.Text != null)
+                {
+                    Directory.Name = nameBox.Text;
+
+                    if(pathBox.Text != Directory.DirectoryInfo.FullName)
+                    {
+                        Directory.DirectoryInfo = new DirectoryInfo(pathBox.Text);
+                    }
+
+                    string[] newExtensions;
+                    if(extensionsBox.Text != "")
+                    {
+                        newExtensions = extensionsBox.Text.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                        for(int i = 0;
+                            i < newExtensions.Length;
+                            ++i)
+                        {
+                            if(newExtensions[i][0] != '.')
+                            {
+                                newExtensions[i] = '.' + newExtensions[i];
+                            }
+                        }
+                    }
+                    else
+                    {
+                        newExtensions = new string[0];
+                    }
+                    Directory.Extensions = newExtensions;
+
+                    ResultID = DirectoryFormResult.Edited;
+                    Close();
+                }
             }
         }
     }

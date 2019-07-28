@@ -32,6 +32,7 @@
             this.addDirectoryButton = new System.Windows.Forms.Button();
             this.removeDirectoryButton = new System.Windows.Forms.Button();
             this.gamesGridView = new System.Windows.Forms.DataGridView();
+            this.editDirectoryButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gamesGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,7 +56,7 @@
             // 
             // removeDirectoryButton
             // 
-            this.removeDirectoryButton.Location = new System.Drawing.Point(343, 13);
+            this.removeDirectoryButton.Location = new System.Drawing.Point(423, 13);
             this.removeDirectoryButton.Name = "removeDirectoryButton";
             this.removeDirectoryButton.Size = new System.Drawing.Size(75, 23);
             this.removeDirectoryButton.TabIndex = 3;
@@ -81,11 +82,22 @@
             this.gamesGridView.Size = new System.Drawing.Size(776, 396);
             this.gamesGridView.TabIndex = 4;
             // 
+            // editDirectoryButton
+            // 
+            this.editDirectoryButton.Location = new System.Drawing.Point(342, 13);
+            this.editDirectoryButton.Name = "editDirectoryButton";
+            this.editDirectoryButton.Size = new System.Drawing.Size(75, 23);
+            this.editDirectoryButton.TabIndex = 5;
+            this.editDirectoryButton.Text = "Edit";
+            this.editDirectoryButton.UseVisualStyleBackColor = true;
+            this.editDirectoryButton.Click += new System.EventHandler(this.editDirectoryButton_Click);
+            // 
             // GameListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.editDirectoryButton);
             this.Controls.Add(this.gamesGridView);
             this.Controls.Add(this.removeDirectoryButton);
             this.Controls.Add(this.addDirectoryButton);
@@ -102,5 +114,6 @@
         private System.Windows.Forms.Button addDirectoryButton;
         private System.Windows.Forms.Button removeDirectoryButton;
         private System.Windows.Forms.DataGridView gamesGridView;
+        private System.Windows.Forms.Button editDirectoryButton;
     }
 }

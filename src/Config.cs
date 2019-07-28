@@ -26,7 +26,7 @@ namespace BugGUI
     // TODO(SpectatorQL): Clean up serialization!
     public class Config
     {
-        string ConfigFileName;
+        string ConfigFileName; // NOTE(SpectatorQL): I'm not a fan of this.
         public List<GamesDirectory> GamesDirectories { get; }
 
         public Config()
@@ -77,6 +77,16 @@ namespace BugGUI
             }
             Debug.Write("\n");
 #endif
+        }
+
+        public void UpdateConfig()
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream configFileStream = File.Open(ConfigFileName, FileMode.Create, FileAccess.Write, FileShare.None);
+            formatter.Serialize(configFileStream, GamesDirectories);
+            configFileStream.Close();
+
+            PrintDirectoryList();
         }
 
         public List<GamesDirectory> AddGamesDirectory(GamesDirectory newDirectory)
