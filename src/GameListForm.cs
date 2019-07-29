@@ -137,7 +137,7 @@ namespace BugGUI
             GameDirectoryForm gameDirectoryForm = new GameDirectoryForm(DirectoryFormIntent.Add, null);
             gameDirectoryForm.FormClosing += (s, args) =>
             {
-                if(gameDirectoryForm.ResultID != DirectoryFormResult.Canceled)
+                if(gameDirectoryForm.ResultID == DirectoryFormResult.Added)
                 {
                     directoryList.DataSource = null;
                     directoryList.DataSource = Config.AddGamesDirectory(gameDirectoryForm.Directory);
@@ -159,11 +159,14 @@ namespace BugGUI
                 GameDirectoryForm gameDirectoryForm = new GameDirectoryForm(DirectoryFormIntent.Edit, selectedDirectory);
                 gameDirectoryForm.FormClosing += (s, args) =>
                 {
-                    Config.Update();
+                    if(gameDirectoryForm.ResultID == DirectoryFormResult.Edited)
+                    {
+                        Config.Update();
 
-                    var temp = directoryList.DataSource;
-                    directoryList.DataSource = null;
-                    directoryList.DataSource = temp;
+                        var temp = directoryList.DataSource;
+                        directoryList.DataSource = null;
+                        directoryList.DataSource = temp;
+                    }
 
                     Enabled = true;
                 };

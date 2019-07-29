@@ -34,7 +34,7 @@
             this.nameBox = new System.Windows.Forms.TextBox();
             this.pathBox = new System.Windows.Forms.TextBox();
             this.extensionsBox = new System.Windows.Forms.TextBox();
-            this.addDirectoryButton = new System.Windows.Forms.Button();
+            this.doneButton = new System.Windows.Forms.Button();
             this.browseButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -87,15 +87,15 @@
             this.extensionsBox.Size = new System.Drawing.Size(372, 20);
             this.extensionsBox.TabIndex = 5;
             // 
-            // addDirectoryButton
+            // doneButton
             // 
-            this.addDirectoryButton.Location = new System.Drawing.Point(168, 94);
-            this.addDirectoryButton.Name = "addDirectoryButton";
-            this.addDirectoryButton.Size = new System.Drawing.Size(125, 58);
-            this.addDirectoryButton.TabIndex = 6;
-            this.addDirectoryButton.Text = "Add";
-            this.addDirectoryButton.UseVisualStyleBackColor = true;
-            this.addDirectoryButton.Click += new System.EventHandler(this.addDirectoryButton_Click);
+            this.doneButton.Location = new System.Drawing.Point(168, 94);
+            this.doneButton.Name = "doneButton";
+            this.doneButton.Size = new System.Drawing.Size(125, 58);
+            this.doneButton.TabIndex = 6;
+            this.doneButton.Text = "Done";
+            this.doneButton.UseVisualStyleBackColor = true;
+            this.doneButton.Click += new System.EventHandler(this.addDirectoryButton_Click);
             // 
             // browseButton
             // 
@@ -107,21 +107,21 @@
             this.browseButton.UseVisualStyleBackColor = true;
             this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
             // 
-            // NewGameDirectoryForm
+            // GameDirectoryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(463, 164);
             this.Controls.Add(this.browseButton);
-            this.Controls.Add(this.addDirectoryButton);
+            this.Controls.Add(this.doneButton);
             this.Controls.Add(this.extensionsBox);
             this.Controls.Add(this.pathBox);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.extensionsLabel);
             this.Controls.Add(this.pathLabel);
             this.Controls.Add(this.nameLabel);
-            this.Name = "NewGameDirectoryForm";
-            this.Text = "NewGameDirectoryForm";
+            this.Name = "GameDirectoryForm";
+            this.Text = "GameDirectoryForm";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -135,7 +135,7 @@
         private System.Windows.Forms.TextBox nameBox;
         private System.Windows.Forms.TextBox pathBox;
         private System.Windows.Forms.TextBox extensionsBox;
-        private System.Windows.Forms.Button addDirectoryButton;
+        private System.Windows.Forms.Button doneButton;
         private System.Windows.Forms.Button browseButton;
     }
 }

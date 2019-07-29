@@ -19,9 +19,9 @@ namespace BugGUI
 
     public enum DirectoryFormResult
     {
+        Canceled,
         Added,
         Edited,
-        Canceled,
     }
 
     public partial class GameDirectoryForm : Form
@@ -90,7 +90,7 @@ namespace BugGUI
                     string[] extensions;
                     if(extensionsBox.Text != "")
                     {
-                        extensions = extensionsBox.Text.Split(';');
+                        extensions = extensionsBox.Text.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                         for(int i = 0;
                             i < extensions.Length;
                             ++i)
